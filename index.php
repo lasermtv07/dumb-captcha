@@ -1,5 +1,8 @@
 <h1>CAPTCHA</h1>
 <?php
+//(c) lasermtv07, 2024
+//under MIT license
+session_start();
 class Color {
 	public $name;
 	public $rgb;
@@ -39,18 +42,27 @@ new Color("Purple",[142, 18, 199],[10,10,10]),
 new Color("Orange",[255, 123, 0],[10,10,10])
 ];
 //echo '<div style="width:50px;height:50px;background-color:'.$colors[4]->writeDeviated().'"> </div>';
+//okay, this algo is fucked up, however its a way how to generate a shuffled subarray from $colors
 shuffle($colors);
 $p=rand(0,sizeof($colors)-10);
 $v=array_slice($colors,$p,9);
 $c=$v[0];
-var_dump($c);
 shuffle($v);
+//generate table
+echo "<h3>Click on ".$c->name."</h3>";
 echo "<table><tr>";
 foreach($v as $k=>$i){
 	if(($k)%3==0) echo "</tr><tr>";
 	echo "<td>";
-	echo '<div style="width:50px;height:50px;background-color:'.$i->writeDeviated().'"> </div>';
+	echo '<a href='.$_SERVER['SCRIPT_NAME']."?num=$k >".'<div style="width:50px;height:50px;background-color:'.$i->writeDeviated().'"> </div></a>';
 	echo "</td>";
 
 }
+//correct captcha
+if(isset($_SESSION["capt"]) && isset($_GET["num"])){
+	if($_SESSION["capt"]==$_GET["num"]) header('location: https://www.youtube.com/watch?v=dQw4w9WgXcQ');
+	else echo "<b>Wrong CAPTCHA!</b>";
+}
+$_SESSION["capt"]=array_search($c,$v);
+
 ?>
